@@ -1,4 +1,4 @@
-package com.unibuc.mds.domain;
+package ro.unibuc.fmi.fleamarket.fleamarket.domain;
 
 
 import javax.persistence.*;

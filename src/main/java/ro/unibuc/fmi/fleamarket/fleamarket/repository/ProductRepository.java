@@ -1,7 +1,8 @@
-package com.unibuc.mds.repository;
+package ro.unibuc.fmi.fleamarket.fleamarket.repository;
 
-import com.unibuc.mds.domain.Product;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import ro.unibuc.fmi.fleamarket.fleamarket.domain.Product;
 
 public interface ProductRepository extends JpaRepository<Product,Long> {
 

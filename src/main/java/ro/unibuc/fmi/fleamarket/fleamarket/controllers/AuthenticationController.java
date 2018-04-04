@@ -1,13 +1,14 @@
-package com.unibuc.mds.controllers;
+package ro.unibuc.fmi.fleamarket.fleamarket.controllers;
 
 
-import com.unibuc.mds.domain.Person;
-import com.unibuc.mds.repository.PersonRepository;
-import com.unibuc.mds.security.AuthUtils;
-import com.unibuc.mds.security.JwtHandler;
+
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ro.unibuc.fmi.fleamarket.fleamarket.domain.Person;
+import ro.unibuc.fmi.fleamarket.fleamarket.repository.PersonRepository;
+import ro.unibuc.fmi.fleamarket.fleamarket.security.AuthUtils;
+import ro.unibuc.fmi.fleamarket.fleamarket.security.JwtHandler;
 
 import javax.json.*;
 import java.io.StringReader;

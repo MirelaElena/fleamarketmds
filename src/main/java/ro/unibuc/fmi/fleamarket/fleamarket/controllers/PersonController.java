@@ -1,12 +1,14 @@
-package com.unibuc.mds.controllers;
+package ro.unibuc.fmi.fleamarket.fleamarket.controllers;
 
-import com.unibuc.mds.domain.Person;
-import com.unibuc.mds.repository.PersonRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ro.unibuc.fmi.fleamarket.fleamarket.domain.Person;
+import ro.unibuc.fmi.fleamarket.fleamarket.repository.PersonRepository;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/persons")
@@ -21,8 +23,8 @@ public class PersonController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{id}")
-    public Person getPersonById(@PathVariable("id") Long id) {
-        return personRepository.findOne(id);
+    public Optional<Person> getPersonById(@PathVariable("id") Long id) {
+        return personRepository.findById(id);
     }
 
     @CrossOrigin

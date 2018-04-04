@@ -1,4 +1,4 @@
-package com.unibuc.mds.security;
+package ro.unibuc.fmi.fleamarket.fleamarket.security;
 
 
 import java.io.File;
@@ -7,7 +7,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 import java.security.*;
-import java.security.cert.*;
+import java.security.cert.CertificateException;
 
 public class KeysUtils {
 

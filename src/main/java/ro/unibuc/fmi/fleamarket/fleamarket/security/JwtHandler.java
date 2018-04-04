@@ -1,4 +1,4 @@
-package com.unibuc.mds.security;
+package ro.unibuc.fmi.fleamarket.fleamarket.security;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

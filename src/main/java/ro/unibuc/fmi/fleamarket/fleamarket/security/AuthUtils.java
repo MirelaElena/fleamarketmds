@@ -1,4 +1,4 @@
-package com.unibuc.mds.security;
+package ro.unibuc.fmi.fleamarket.fleamarket.security;
 
 public class AuthUtils {
 
