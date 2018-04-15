@@ -43,11 +43,9 @@ public class Person {
     private String profilePic;
 
 
-
     @OneToMany(mappedBy = "person")
     @JsonIgnore
     private Set<Product> products = new HashSet<>();
-
 
     public Long getId() {
         return id;
