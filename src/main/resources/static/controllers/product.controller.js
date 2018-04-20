@@ -1,3 +1,45 @@
+app.controller('ListProductsController', function ($scope, $location, DataProductsFactory, ListProductsFactory, $route) {
+    var product = ListProductsFactory.query();
+    product.$promise.then(function (result) {
+        console.log("ListProductsController");
+        DataProductsFactory.init(result);
+        $scope.products = result;
+        console.log(result);
+        $scope.products = DataProductsFactory.getProducts();
+    });
+});
+
+app.controller('ListProductsByCategoryController', function ($scope, $location, DataProductsFactory, ListProductsByCategoryFactory, $route) {
+    var product = ListProductsByCategoryFactory.query();
+    product.$promise.then(function (result) {
+        console.log("ListProductsByCategoryController");
+        DataProductsFactory.init(result);
+        $scope.products = result;
+        console.log(result);
+        $scope.products = DataProductsFactory.getProducts();
+    });
+});
+
+app.controller('ViewProductController', function ($scope, $location, ListProductsByIdFactory, $route, $routeParams) {
+    var selectedProduct = ListProductsByIdFactory.query({id: $routeParams.id});
+    selectedProduct.$promise.then(function (result) {
+        $scope.product = result;
+    });
+});
+
+app.controller('ViewProductsByCategoryController', function ($scope, $location, ListProductsByCategoryFactory, $route, $routeParams) {
+    var selectedProduct = ListProductsByCategoryFactory.query({category: $routeParams.category});
+    selectedProduct.$promise.then(function (result) {
+        $scope.products = result;
+    });
+});
+
+app.controller('ViewProductsBySearchController', function ($scope, $location, ListProductsBySearchFactory, $route, $routeParams) {
+    var selectedProduct = ListProductsBySearchFactory.query({word: $routeParams.word});
+    selectedProduct.$promise.then(function (result) {
+        $scope.products = result;
+    });
+});
 
 app.controller('EditProductsController',
     function ($window,
@@ -36,6 +78,36 @@ app.controller('EditProductsController',
                     }
                 });
         };
+    });
+
+app.controller('ProductsActionsController',
+    function ($scope, $location, ListProductsByIdFactory, DeleteProductsFactory, $route) {
+        $scope.hoverIn = function () {
+            this.Icon = true;
+        };
+
+        $scope.hoverOut = function () {
+            this.Icon = false;
+        };
 
 
+        $scope.viewProduct = function (productid) {
+            ListProductsByIdFactory.query({id: productid}, null);
+        };
+
+        $scope.viewProductByCategory = function (productCategory) {
+            ListProductsByCategoryFactory.query({category: productCategory}, null);
+        };
+
+        $scope.editProduct = function (productid) {
+            var selectedProduct = ListProductsByIdFactory.query({id: productid});
+            selectedProduct.$promise.then(function (result) {
+                EditProductsFactory.update({id: productid}, result);
+            });
+        };
+
+        $scope.deleteProduct = function (productid) {
+            DeleteProductsFactory.delete_product({id: productid}, null);
+            $route.reload();
+        };
     });

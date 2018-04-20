@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ro.unibuc.fmi.fleamarket.fleamarket.domain.Product;
+import ro.unibuc.fmi.fleamarket.fleamarket.domain.enumeration.Category;
 import ro.unibuc.fmi.fleamarket.fleamarket.domain.enumeration.ProductStatus;
 import ro.unibuc.fmi.fleamarket.fleamarket.repository.PersonRepository;
 import ro.unibuc.fmi.fleamarket.fleamarket.repository.ProductRepository;
@@ -82,6 +83,16 @@ public class ProductController {
             return "";
         }
     }
+    @RequestMapping(method = RequestMethod.GET, value="/category/{category}", produces = "application/json")
+    public List<Product> getProductsListByCategory(@PathVariable("category") Category category){
+        return productRepository.getProductsListByCategory(category);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value="/search/{word}", produces = "application/json")
+    public List<Product> getProductsListBySearch(@PathVariable("word") String word){
+        return productRepository.getProductsListBySearch(word);
+    }
+
         @RequestMapping(value="/upload", method = RequestMethod.POST,produces = "application/json")
         public String uploadNewImage(@RequestParam(value="file", required=true) MultipartFile file,
                 @RequestHeader(value="Authorization", defaultValue = "") String auth) {

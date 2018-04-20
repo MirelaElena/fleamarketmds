@@ -4,6 +4,30 @@ app.factory('AddProductsFactory', function ($resource, $location) {
     });
 });
 
+app.factory('ListProductsFactory', function ($resource, $location) {
+    return $resource(($location.protocol() + "://" + $location.host() + ":" + $location.port()) + '/products', {}, {
+        query: { method: 'GET', isArray: true }
+    })
+});
+
+app.factory('ListProductsByIdFactory', function ($resource, $location) {
+    return $resource(($location.protocol() + "://" + $location.host() + ":" + $location.port()) + '/products/:id',{}, {
+        query: { method: 'GET' }
+    });
+});
+
+app.factory('ListProductsByCategoryFactory', function ($resource, $location) {
+    return $resource(($location.protocol() + "://" + $location.host() + ":" + $location.port()) + '/products/category/:category',{}, {
+        query: { method: 'GET', isArray: true  }
+    });
+});
+
+app.factory('ListProductsBySearchFactory', function ($resource, $location) {
+    return $resource(($location.protocol() + "://" + $location.host() + ":" + $location.port()) + '/products/search/:word',{}, {
+        query: { method: 'GET', isArray: true  }
+    });
+});
+
 app.factory('DataProductsFactory', function(){
     var ProductsList = [];
 

@@ -59,14 +59,15 @@
 
     <ul class="nav navbar-nav navbar-right">
         <li class="mx-auto">
+            <a ng-controller="RedirectSearch" >
                 <form class="form-inline my-2 my-lg-0">
-                    <input type="searchTxt" id="searchTxt"
+                    <input ng-model="enteredWord" class="form-control mr-sm-2" type="searchTxt" id="searchTxt"
                            placeholder="Search" style='min-width: 150px'>
-                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
+                    <button class="btn btn-outline-success my-2 my-sm-0" ng-click="redirect(enteredWord)" type="submit">
                         Search
                     </button>
                 </form>
-
+            </a>
         </li>
 
         <li>
