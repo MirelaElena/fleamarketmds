@@ -23,7 +23,7 @@ app.factory('AuthenticationService', function ($http, $localStorage) {
     service.Logout = function () {
         // remove user from local storage and clear http auth header
         $localStorage.token = '';
-    }
+    };
 
     service.hasLoggedUser = function(callbackFn) {
         if ($localStorage.token && $localStorage.token !== '') {
@@ -32,7 +32,7 @@ app.factory('AuthenticationService', function ($http, $localStorage) {
             callbackFn(false);
         }
 
-    }
+    };
 
     return service;
 });

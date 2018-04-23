@@ -14,6 +14,10 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             "where p.category = :category AND p.productStatus = 'ENABLED' ")
     List<Product> getProductsListByCategory(@Param("category") Category category);
 
+    @Query("select p from Product p " +
+            "where p.person.id = :personId")
+    List<Product> getMyProducts(@Param("personId") Long personId);
+
     @Query("select p from Product p " + "where UPPER(p.productName) LIKE CONCAT('%',UPPER(:word),'%')  " +
             "AND p.productStatus = 'ENABLED' " )
     List<Product> getProductsListBySearch(@Param("word") String word);

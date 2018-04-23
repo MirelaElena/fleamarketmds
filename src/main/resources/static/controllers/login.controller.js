@@ -11,7 +11,7 @@ app.controller('LoginController', function($scope , $location, AuthenticationSer
                 $scope.loading = false;
             }
         });
-    }
+    };
 
     initController();
 
@@ -24,7 +24,7 @@ app.controller('LoginController', function($scope , $location, AuthenticationSer
         AuthenticationService.Logout();
         $route.reload();
         console.log('AAAA' + $localStorage.token);
-    }
+    };
 
     $scope.hasLoggedUser = function() {
 

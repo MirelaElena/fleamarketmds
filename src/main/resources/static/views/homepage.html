@@ -8,8 +8,16 @@
     <title>Flea Market</title>
 
 </head>
+<!-- Jumbotron -->
+<div class="container">
+    <div class="jumbotron">
+        <h1>MDS Flea Market</h1>
+        <p>Sell. Donate. Connect.</p>
+        <p><a class="btn btn-primary" href="/#/product/new">Add a new product</a></p>
+    </div>
+</div>
+</br></br>
 
-<body>
 
 <div class="container">
     <h1 class="text-center">Product categories</h1></br>
@@ -53,6 +61,49 @@
     </div>
 </div>
 </br></br>
+
+
+
+<!-- Latest products -->
+<div ng-controller="ProductsActionsController as product" class="container">
+    <h1 class="text-center">Latest products</h1></br>
+    <!--<div class="row">-->
+
+    <div ng-repeat="product in products ">
+        <div class="col-md-2">
+            <a href="#/productview/{{product.id}}">
+                <div class="container">
+
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <div class="panel panel-primary">
+
+                                <div class="panel-heading">
+                                    <h4>
+                                        {{product.productName}}
+                                    </h4>
+                                </div>
+                                <div class="panel-body">
+                                    <img ng-src="/products/images/{{product.imageUrl}}"
+                                         class="img-responsive" class="img-rounded" style="width:100%" alt="Image">
+                                </div>
+                                <div class="panel-footer">
+                                    <h4><strong>{{product.price}} lei</strong>
+                                    </h4>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!--</div>-->
+</div>
+</br></br></br>
 
 </body>
 

@@ -12,7 +12,7 @@ app.controller('RegisterController', function($window, $scope , $location, Regis
                     $scope.loading = false;
                 }
             });
-    }
+    };
 
     initController();
 

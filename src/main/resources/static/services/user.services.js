@@ -4,6 +4,12 @@ app.factory('AddUserFactory', function ($resource, $location) {
     });
 });
 
+app.factory('ListUsersByIdFactory', function ($resource, $location) {
+    return $resource(($location.protocol() + "://" + $location.host() + ":" + $location.port()) + '/persons/:id',{}, {
+        query: { method: 'GET' }
+    });
+});
+
 app.factory('DataUsersFactory', function(){
     var UsersList = [];
 

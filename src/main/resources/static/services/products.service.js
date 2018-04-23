@@ -4,8 +4,32 @@ app.factory('AddProductsFactory', function ($resource, $location) {
     });
 });
 
+app.factory('DeleteProductsFactory', function ($resource, $location) {
+    return $resource(($location.protocol() + "://" + $location.host() + ":" + $location.port()) + '/products/:id',{}, {
+        delete_product: { method: 'DELETE' }
+    });
+});
+
 app.factory('ListProductsFactory', function ($resource, $location) {
     return $resource(($location.protocol() + "://" + $location.host() + ":" + $location.port()) + '/products', {}, {
+        query: { method: 'GET', isArray: true }
+    })
+});
+
+app.factory('ListLatest6ProductsFactory', function ($resource, $location) {
+    return $resource(($location.protocol() + "://" + $location.host() + ":" + $location.port()) + '/products/latest6Products', {}, {
+        query: { method: 'GET', isArray: true }
+    })
+});
+
+app.factory('ListMyProductsFactory', function ($resource, $location) {
+    return $resource(($location.protocol() + "://" + $location.host() + ":" + $location.port()) + '/products/my', {}, {
+        query: { method: 'GET', isArray: true }
+    })
+});
+
+app.factory('ListHistoryProductsFactory', function ($resource, $location) {
+    return $resource(($location.protocol() + "://" + $location.host() + ":" + $location.port()) + '/products/history', {}, {
         query: { method: 'GET', isArray: true }
     })
 });

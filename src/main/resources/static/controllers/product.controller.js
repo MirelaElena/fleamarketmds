@@ -9,6 +9,39 @@ app.controller('ListProductsController', function ($scope, $location, DataProduc
     });
 });
 
+app.controller('ListLatest6ProductsController', function ($scope, $location, DataProductsFactory, ListLatest6ProductsFactory, $route) {
+    var product = ListLatest6ProductsFactory.query();
+    product.$promise.then(function (result) {
+        console.log("ListLatest6ProductsController");
+        DataProductsFactory.init(result);
+        $scope.products = result;
+        console.log(result);
+        $scope.products = DataProductsFactory.getProducts();
+    });
+});
+
+app.controller('ListMyProductsController', function ($scope, $location, DataProductsFactory, ListMyProductsFactory, $route) {
+    var product = ListMyProductsFactory.query();
+    product.$promise.then(function (result) {
+        console.log("ListMyProductsController");
+        DataProductsFactory.init(result);
+        $scope.myProducts = result;
+        console.log(result);
+        $scope.myProducts = DataProductsFactory.getProducts();
+    });
+});
+
+app.controller('ListHistoryProductsController', function ($scope, $location, DataProductsFactory, ListHistoryProductsFactory, $route) {
+    var product = ListHistoryProductsFactory.query();
+    product.$promise.then(function (result) {
+        console.log("ListMyProductsController");
+        DataProductsFactory.init(result);
+        $scope.historyProducts = result;
+        console.log(result);
+        $scope.historyProducts = DataProductsFactory.getProducts();
+    });
+});
+
 app.controller('ListProductsByCategoryController', function ($scope, $location, DataProductsFactory, ListProductsByCategoryFactory, $route) {
     var product = ListProductsByCategoryFactory.query();
     product.$promise.then(function (result) {

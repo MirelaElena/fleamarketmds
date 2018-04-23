@@ -1,6 +1,5 @@
 package ro.unibuc.fmi.fleamarket.fleamarket.controllers;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -10,6 +9,7 @@ import ro.unibuc.fmi.fleamarket.fleamarket.domain.enumeration.ProductStatus;
 import ro.unibuc.fmi.fleamarket.fleamarket.repository.PersonRepository;
 import ro.unibuc.fmi.fleamarket.fleamarket.repository.ProductRepository;
 import ro.unibuc.fmi.fleamarket.fleamarket.security.AuthUtils;
+import ro.unibuc.fmi.fleamarket.fleamarket.utils.DateUtils;
 import ro.unibuc.fmi.fleamarket.fleamarket.utils.FileManager;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +36,56 @@ public class ProductController {
     @Autowired
     private PersonRepository personRepository;
 
+    @RequestMapping(method = RequestMethod.GET,produces = "application/json")
+    public List<Product> products(){
+        return productRepository.findAll();
+    }
+
+    @RequestMapping(method = RequestMethod.GET,produces = "application/json", value="/latest6Products")
+    public List<Product> latest6Products(){
+        List<Product> listOfProducts = productRepository.findAll();
+        listOfProducts.sort(DateUtils.getDateComparator());
+        int endIndex = 6;
+        if (listOfProducts.size() < 6 ) {
+            endIndex = listOfProducts.size();
+        }
+        return listOfProducts.subList(0, endIndex);
+    }
+
+    @RequestMapping(value="/my", method = RequestMethod.GET,produces = "application/json")
+    public List<Product> getUserProducts(@RequestHeader(value = "Authorization", defaultValue = "") String auth){
+        Long userId = Long.valueOf(AuthUtils.getCurrentUser(auth));
+        if (userId == -1) {
+            System.out.println("Unauthorized!!!");
+            return null;
+        }
+        List<Product> listOfProducts = productRepository.getMyProducts(userId);
+        List<Product> enabledProducts = new ArrayList<Product>();
+        for (Product p : listOfProducts) {
+            if (p.getProductStatus() == ProductStatus.ENABLED) {
+                enabledProducts.add(p);
+            }
+        }
+        return enabledProducts;
+    }
+
+    @RequestMapping(value="/history", method = RequestMethod.GET,produces = "application/json")
+    public List<Product> getDisabledProducts(@RequestHeader(value = "Authorization", defaultValue = "") String auth){
+        Long userId = Long.valueOf(AuthUtils.getCurrentUser(auth));
+        if (userId == -1) {
+            System.out.println("Unauthorized!!!");
+            return null;
+        }
+        List<Product> listOfProducts = productRepository.getMyProducts(userId);
+        List<Product> disabledProducts = new ArrayList<Product>();
+        for (Product p : listOfProducts) {
+            if (p.getProductStatus() == ProductStatus.DISABLED) {
+                disabledProducts.add(p);
+            }
+        }
+        return disabledProducts;
+    }
+
     @RequestMapping(method = RequestMethod.GET, value="/{id}", produces = "application/json")
     public Optional<Product> getProductById(@PathVariable("id") Long id){
         return productRepository.findById(id);
@@ -61,6 +111,13 @@ public class ProductController {
             System.out.println("Please sing in, after that you can create an product");
             return "";
         }
+    }
+
+    @RequestMapping(method = RequestMethod.DELETE, value="/{id}")
+    public void deleteProduct(@PathVariable("id") Long id,
+                              @RequestHeader(value="Authorization", defaultValue = "") String auth){
+        Product product = productRepository.findById(id).get();
+        productRepository.delete(product);
     }
 
     @RequestMapping(method = RequestMethod.PUT, value="/{id}")
