@@ -4,12 +4,8 @@
     <title>FleaMarket App</title>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <link rel="stylesheet" href="css/bootstrap.min.css"/>
-    <style>
-        .black {
-            color : #000000;
-        }
+    <link href="https://fonts.googleapis.com/css?family=Gamja+Flower" rel="stylesheet">
 
-    </style>
 </head>
 
 <script src="js/angular.min.js"></script>
@@ -53,7 +49,7 @@
             <span class="icon-bar"></span>
         </button>
 
-        <a class="navbar-logo" href="/#/" style='color: #000000; position: sticky; top: 200%'>
+        <a class="navbar-logo" href="/#/" style="color: #000000; position: sticky; top: 200%;font-family: 'Gamja Flower', cursive;font-size: 50px;text-decoration: none;">
             <img style='top: 16px' src="" width="40"
                  height="40" alt=""> Flea Market
         </a>
@@ -65,7 +61,7 @@
                 <form class="form-inline my-2 my-lg-0">
                     <input ng-model="enteredWord" class="form-control mr-sm-2" type="searchTxt" id="searchTxt"
                            placeholder="Search" style='min-width: 150px'>
-                    <button class="btn btn-outline-success my-2 my-sm-0" ng-click="redirect(enteredWord)" type="submit">
+                    <button class="btn btn-outline-success my-2 my-sm-0" style="color:black;font-size:20px;" ng-click="redirect(enteredWord)" type="submit">
                         Search
                     </button>
                 </form>
@@ -73,38 +69,38 @@
         </li>
 
         <li>
-            <a href="/#/" style='color: #000000;'><span class="glyphicon glyphicon-home"></span> Home</a>
+            <a href="/#/" style="color:black;font-size:17px;"><span class="glyphicon glyphicon-home"></span> Home</a>
         </li>
 
         <!--Add a new product button-->
         <li ng-show="hasLoggedUser()">
-            <a href="/#/product/new" style='color: #000000'><span class="glyphicon glyphicon-plus-sign"></span> Add a
+            <a href="/#/product/new" style="color:black;font-size:17px;"><span class="glyphicon glyphicon-plus-sign"></span> Add a
                 new product</a>
         </li>
 
         <!-- Add a new product button when not logged in -->
         <li ng-show="!hasLoggedUser()">
-            <a href="/#/login" style='color: #000000'><span class="glyphicon glyphicon-plus-sign"></span> Add a
+            <a href="/#/login" style="color:black;font-size:17px;"><span class="glyphicon glyphicon-plus-sign"></span> Add a
                 new product</a>
         </li>
 
         <!-- My profile  -->
         <li ng-show="hasLoggedUser()">
-            <a href="/#/profile/myProducts" style='color: #000000'><span class="glyphicon glyphicon-tower"></span> My
+            <a href="/#/profile/myProducts" style="color:black;font-size:17px;"><span class="glyphicon glyphicon-tower"></span> My
                 profile</a>
         </li>
 
         <li ng-show="hasLoggedUser()">
-            <a href="/#/logout" ng-click="logout()" style='color: #000000'><span class="glyphicon glyphicon-log-in"></span> Logout</a>
+            <a href="/#/logout" ng-click="logout()" style="color:black;font-size:17px;"><span class="glyphicon glyphicon-log-in"></span> Logout</a>
         </li>
 
         <!--Sign-up and login buttons-->
         <li ng-show="!hasLoggedUser()">
-            <a href="/#/register" style='color: #000000'><span class="glyphicon glyphicon-user"></span> Sign Up</a>
+            <a href="/#/register" style="color:black;font-size:17px;"><span class="glyphicon glyphicon-user"></span> Sign Up</a>
         </li>
 
         <li ng-show="!hasLoggedUser()">
-            <a href="/#/login" style='color: #000000; background-color=#f2f3f2'><span
+            <a href="/#/login" style="color: #000000; font-size: 17px; background-color: #f2f3f2"><span
                     class="glyphicon glyphicon-log-in"></span> Login</a>
         </li>
 
