@@ -58,9 +58,14 @@ app.config(function ($routeProvider, $httpProvider) {
                 controller: 'EditProductsController',
                 templateUrl: '/views/editProduct.html'
             })
+        .when('/send',
+            {
+                controller: 'SendMail',
+                templateUrl: '/views/homepage.html'
+            })
         .otherwise({
             redirectTo: '/'
-        })
+        });
 
         $httpProvider.interceptors.push('httpRequestInterceptor');
 

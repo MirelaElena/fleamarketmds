@@ -9,6 +9,8 @@ import ro.unibuc.fmi.fleamarket.fleamarket.domain.enumeration.ProductStatus;
 import ro.unibuc.fmi.fleamarket.fleamarket.repository.PersonRepository;
 import ro.unibuc.fmi.fleamarket.fleamarket.repository.ProductRepository;
 import ro.unibuc.fmi.fleamarket.fleamarket.security.AuthUtils;
+import ro.unibuc.fmi.fleamarket.fleamarket.service.MailContentBuilder;
+import ro.unibuc.fmi.fleamarket.fleamarket.service.SendMailService;
 import ro.unibuc.fmi.fleamarket.fleamarket.utils.DateUtils;
 import ro.unibuc.fmi.fleamarket.fleamarket.utils.FileManager;
 
@@ -23,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.*;
 import java.util.*;
+
 import static java.time.LocalDate.now;
 
 
@@ -30,30 +33,40 @@ import static java.time.LocalDate.now;
 @RequestMapping("/products")
 public class ProductController {
 
+    private final SendMailService sendMailService;
+
+    private final MailContentBuilder mailContentBuilder;
+
     @Autowired
     private ProductRepository productRepository;
 
     @Autowired
     private PersonRepository personRepository;
 
-    @RequestMapping(method = RequestMethod.GET,produces = "application/json")
-    public List<Product> products(){
+    @Autowired
+    public ProductController(SendMailService sendMailService, MailContentBuilder mailContentBuilder) {
+        this.sendMailService = sendMailService;
+        this.mailContentBuilder = mailContentBuilder;
+    }
+
+    @RequestMapping(method = RequestMethod.GET, produces = "application/json")
+    public List<Product> products() {
         return productRepository.findAll();
     }
 
-    @RequestMapping(method = RequestMethod.GET,produces = "application/json", value="/latest6Products")
-    public List<Product> latest6Products(){
+    @RequestMapping(method = RequestMethod.GET, produces = "application/json", value = "/latest6Products")
+    public List<Product> latest6Products() {
         List<Product> listOfProducts = productRepository.findAll();
         listOfProducts.sort(DateUtils.getDateComparator());
         int endIndex = 6;
-        if (listOfProducts.size() < 6 ) {
+        if (listOfProducts.size() < 6) {
             endIndex = listOfProducts.size();
         }
         return listOfProducts.subList(0, endIndex);
     }
 
-    @RequestMapping(value="/my", method = RequestMethod.GET,produces = "application/json")
-    public List<Product> getUserProducts(@RequestHeader(value = "Authorization", defaultValue = "") String auth){
+    @RequestMapping(value = "/my", method = RequestMethod.GET, produces = "application/json")
+    public List<Product> getUserProducts(@RequestHeader(value = "Authorization", defaultValue = "") String auth) {
         Long userId = Long.valueOf(AuthUtils.getCurrentUser(auth));
         if (userId == -1) {
             System.out.println("Unauthorized!!!");
@@ -69,8 +82,8 @@ public class ProductController {
         return enabledProducts;
     }
 
-    @RequestMapping(value="/history", method = RequestMethod.GET,produces = "application/json")
-    public List<Product> getDisabledProducts(@RequestHeader(value = "Authorization", defaultValue = "") String auth){
+    @RequestMapping(value = "/history", method = RequestMethod.GET, produces = "application/json")
+    public List<Product> getDisabledProducts(@RequestHeader(value = "Authorization", defaultValue = "") String auth) {
         Long userId = Long.valueOf(AuthUtils.getCurrentUser(auth));
         if (userId == -1) {
             System.out.println("Unauthorized!!!");
@@ -86,16 +99,16 @@ public class ProductController {
         return disabledProducts;
     }
 
-    @RequestMapping(method = RequestMethod.GET, value="/{id}", produces = "application/json")
-    public Optional<Product> getProductById(@PathVariable("id") Long id){
+    @RequestMapping(method = RequestMethod.GET, value = "/{id}", produces = "application/json")
+    public Optional<Product> getProductById(@PathVariable("id") Long id) {
         return productRepository.findById(id);
     }
 
     @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
     public String saveProduct(@RequestBody @Valid Product product,
-                              @RequestHeader(value="Authorization", defaultValue = "") String auth){
-        Long userId   = Long.valueOf(AuthUtils.getCurrentUser(auth));
-        if(userId != -1){
+                              @RequestHeader(value = "Authorization", defaultValue = "") String auth) {
+        Long userId = Long.valueOf(AuthUtils.getCurrentUser(auth));
+        if (userId != -1) {
             product.setId(null);
             product.setPublishDate(now());
             product.setProductStatus(ProductStatus.ENABLED);
@@ -106,23 +119,22 @@ public class ProductController {
                     .add("productId", product.getId())
                     .build()
                     .toString();
-        }
-        else {
+        } else {
             System.out.println("Please sing in, after that you can create an product");
             return "";
         }
     }
 
-    @RequestMapping(method = RequestMethod.DELETE, value="/{id}")
+    @RequestMapping(method = RequestMethod.DELETE, value = "/{id}")
     public void deleteProduct(@PathVariable("id") Long id,
-                              @RequestHeader(value="Authorization", defaultValue = "") String auth){
+                              @RequestHeader(value = "Authorization", defaultValue = "") String auth) {
         Product product = productRepository.findById(id).get();
         productRepository.delete(product);
     }
 
-    @RequestMapping(method = RequestMethod.PUT, value="/{id}")
-    public String editProduct(@RequestBody @Valid Product editProduct ,@PathVariable("id") Long id,
-                              @RequestHeader(value="Authorization", defaultValue = "") String auth) {
+    @RequestMapping(method = RequestMethod.PUT, value = "/{id}")
+    public String editProduct(@RequestBody @Valid Product editProduct, @PathVariable("id") Long id,
+                              @RequestHeader(value = "Authorization", defaultValue = "") String auth) {
         Long userId = Long.valueOf(AuthUtils.getCurrentUser(auth));
         if (userId != -1) {
             editProduct.setId(id);
@@ -140,81 +152,105 @@ public class ProductController {
             return "";
         }
     }
-    @RequestMapping(method = RequestMethod.GET, value="/category/{category}", produces = "application/json")
-    public List<Product> getProductsListByCategory(@PathVariable("category") Category category){
+
+    @RequestMapping(method = RequestMethod.GET, value = "/category/{category}", produces = "application/json")
+    public List<Product> getProductsListByCategory(@PathVariable("category") Category category) {
         return productRepository.getProductsListByCategory(category);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value="/search/{word}", produces = "application/json")
-    public List<Product> getProductsListBySearch(@PathVariable("word") String word){
+    @RequestMapping(method = RequestMethod.GET, value = "/search/{word}", produces = "application/json")
+    public List<Product> getProductsListBySearch(@PathVariable("word") String word) {
         return productRepository.getProductsListBySearch(word);
     }
 
-        @RequestMapping(value="/upload", method = RequestMethod.POST,produces = "application/json")
-        public String uploadNewImage(@RequestParam(value="file", required=true) MultipartFile file,
-                @RequestHeader(value="Authorization", defaultValue = "") String auth) {
-
-            if (auth == null || auth.equals("")) {
-                return Json.createObjectBuilder().add("error", "Forbidden").build().toString();
-            }
-
-            String originalImageName = file.getOriginalFilename();
-            String imageName = AuthUtils.getCurrentUser(auth) + originalImageName;
-
-
-            String imageAbsolutePath = FileManager.getImagePath(imageName);
-            System.out.println(imageAbsolutePath);
-            try {
-                File f = new File(imageAbsolutePath);
-                f.createNewFile();
-                file.transferTo(f);
-            } catch (IllegalStateException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return Json.createObjectBuilder().add("imageUrl", imageName).build().toString();
+    @RequestMapping(method = RequestMethod.POST, value = "/send", consumes = "application/json")
+    public void sendMail(@RequestBody String mail) {
+        System.out.println("Mail-ul este = " + mail);
+        String email = getMail(mail);
+        System.out.println(email);
+        String html = mailContentBuilder.build("V-ati abonat cu succes la newsletter.",
+                "In fiecare saptamana veti primi oferte speciale si va vom pune la curent cu cele mai noi produse.");
+        try {
+            sendMailService.sendHtmlEmail(email, "Flea Market Newsletter", html);
+        } catch (javax.mail.MessagingException e) {
+            e.printStackTrace();
         }
 
-        @RequestMapping(value="/images/{imageName:.+}", method = RequestMethod.GET)
-        public void getImage(HttpServletRequest req,
-                HttpServletResponse resp,
-                @PathVariable("imageName") String imageName) {
-
-            String imageAbsolutePath = FileManager.getImagePath(imageName);
-            System.out.println(imageAbsolutePath);
-
-            // retrieve mimeType dynamically
-            ServletContext cntx= req.getServletContext();
-            String mime = cntx.getMimeType(imageAbsolutePath);
-            if (mime == null) {
-                resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                return;
-            }
-
-            resp.setContentType(mime);
-            File file = new File(imageAbsolutePath);
-            resp.setContentLength((int)file.length());
-
-            FileInputStream in = null;
-            OutputStream out = null;
-            try {
-                in = new FileInputStream(file);
-                out = resp.getOutputStream();
-
-                // Copy the contents of the file to the output stream
-                byte[] buf = new byte[1024];
-                int count = 0;
-                while ((count = in.read(buf)) >= 0) {
-                    out.write(buf, 0, count);
-                }
-                out.close();
-                in.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-                return;
-            }
-
-        }
     }
+
+    @RequestMapping(value = "/upload", method = RequestMethod.POST, produces = "application/json")
+    public String uploadNewImage(@RequestParam(value = "file", required = true) MultipartFile file,
+                                 @RequestHeader(value = "Authorization", defaultValue = "") String auth) {
+
+        if (auth == null || auth.equals("")) {
+            return Json.createObjectBuilder().add("error", "Forbidden").build().toString();
+        }
+
+        String originalImageName = file.getOriginalFilename();
+        String imageName = AuthUtils.getCurrentUser(auth) + originalImageName;
+
+
+        String imageAbsolutePath = FileManager.getImagePath(imageName);
+        System.out.println(imageAbsolutePath);
+        try {
+            File f = new File(imageAbsolutePath);
+            f.createNewFile();
+            file.transferTo(f);
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return Json.createObjectBuilder().add("imageUrl", imageName).build().toString();
+    }
+
+    @RequestMapping(value = "/images/{imageName:.+}", method = RequestMethod.GET)
+    public void getImage(HttpServletRequest req,
+                         HttpServletResponse resp,
+                         @PathVariable("imageName") String imageName) {
+
+        String imageAbsolutePath = FileManager.getImagePath(imageName);
+        System.out.println(imageAbsolutePath);
+
+        // retrieve mimeType dynamically
+        ServletContext cntx = req.getServletContext();
+        String mime = cntx.getMimeType(imageAbsolutePath);
+        if (mime == null) {
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return;
+        }
+
+        resp.setContentType(mime);
+        File file = new File(imageAbsolutePath);
+        resp.setContentLength((int) file.length());
+
+        FileInputStream in = null;
+        OutputStream out = null;
+        try {
+            in = new FileInputStream(file);
+            out = resp.getOutputStream();
+
+            // Copy the contents of the file to the output stream
+            byte[] buf = new byte[1024];
+            int count = 0;
+            while ((count = in.read(buf)) >= 0) {
+                out.write(buf, 0, count);
+            }
+            out.close();
+            in.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+
+    }
+    public String getMail(String mail)
+    {
+        int i=0;
+        while(mail.charAt(i)!=':')
+            i++;
+
+        return mail.substring(i+2,mail.length()-2);
+    }
+}
 
